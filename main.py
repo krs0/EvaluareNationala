@@ -105,7 +105,7 @@ def scrape_jud(jud_code):
     return headers, all_data, judet_name
 
 # Loop over all Jud codes
-for jud_code in range(1, 100):  # go until non-existent
+for jud_code in range(1, 42):
     headers, data, judet_name = scrape_jud(jud_code)
     if not data:
         continue
@@ -118,3 +118,11 @@ for jud_code in range(1, 100):  # go until non-existent
 
 driver.quit()
 print("\n✅ All counties processed.")
+
+# Concatenate all CSV files into a single national file
+print("\n🔗 Concatenating all county CSVs into evaluare_romania.csv")
+all_csv_files = [os.path.join(OUTPUT_FOLDER, f) for f in os.listdir(OUTPUT_FOLDER) if f.endswith(".csv")]
+all_dfs = [pd.read_csv(csv_file, encoding="utf-8-sig") for csv_file in all_csv_files]
+combined_df = pd.concat(all_dfs, ignore_index=True)
+combined_df.to_csv(os.path.join(OUTPUT_FOLDER, "evaluare_romania.csv"), index=False, encoding="utf-8-sig")
+print(f"📊 Combined file saved as {OUTPUT_FOLDER}/evaluare_romania.csv")
